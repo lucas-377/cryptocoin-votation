@@ -1,0 +1,19 @@
+﻿@model IList<CryptoCoins.Models.Coin>
+
+<h4>Which crypto coin do you buy?</h4>
+<hr />
+
+<form asp-controller="Coins" asp-action="CryptoChoice" method="post" class="form-group">
+    @for (int i = 0; i < Model.Count; i++)
+    {
+        <input type="checkbox" asp-for="@Model[i].IsChecked" />
+        <label asp-for="@Model[i].IsChecked">@Model[i].Name</label>
+
+        <input asp-for="@Model[i].CoinId" type="hidden" />
+        <input asp-for="@Model[i].Name" type="hidden" />
+
+        <br />
+    }
+
+    <input type="submit" value="Submit" class="btn btn-default"/>
+</form>

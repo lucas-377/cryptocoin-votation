@@ -1,0 +1,115 @@
+﻿@model IEnumerable<CryptoCoins.Models.Coin>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h2>Index</h2>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Quantity)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Quantity)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.CoinId">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.CoinId">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.CoinId">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
+
+<div class="row">
+    <div class="well col-lg-6">
+        @await Component.InvokeAsync("Coin")
+    </div>
+    <div class="col-lg-6">
+        <partial name="_Graphic" />
+    </div>
+</div>
+
+<script>
+    function GetCoins(data) {
+        let quantity = 0;
+        let coins = [];
+
+        while (quantity < data.length) {
+            coins.push(data[quantity].name);
+            quantity++;
+        }
+
+        return coins;
+    }
+
+    function GetQuantity(data) {
+        let quantity = 0;
+        let values = [];
+
+        while (quantity < data.length) {
+            values.push(data[quantity].quantity);
+            quantity++;
+        }
+
+        return values;
+    }
+
+    function GetColors(quantity) {
+        let colors = [];
+
+        while (quantity >= 0) {
+            let r = Math.floor(Math.random() * 255);
+            let g = Math.floor(Math.random() * 255);
+            let b = Math.floor(Math.random() * 255);
+
+            colors.push("rgb(" + r + "," + g + "," + b + ")");
+
+            quantity--;
+        }
+    }
+
+    $.ajax({
+        type: 'GET',
+        url: 'Coins/GraphicData',
+        success: function (data) {
+            new Chart(document.getElementById('graphic'), {
+                type: 'pie',
+                data: {
+                    labels: GetCoins(data),
+                    datasets: [{
+                        labels: 'Quantity',
+                        borderWidth: 2,
+                        backgroundColor: GetColors(data.length),
+                        data: GetQuantity(data)
+                    }]
+                },
+                options: {
+                    title: {
+                        display: true,
+                        text: 'Coins quantity'
+                    }
+                }
+            });
+        }
+    });
+</script>
